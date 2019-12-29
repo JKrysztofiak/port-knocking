@@ -1,8 +1,6 @@
 package com.jKrysztofiak;
 
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -10,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 public class PortKnocker extends Thread {
 	
 	List<Integer> portOrder;
-	List<PortTracker> portsOpen;
+	List<SinglePortTracker> portsOpen;
 	
 	private BlockingQueue<Integer> queue;
 	
@@ -26,21 +24,20 @@ public class PortKnocker extends Thread {
 		portsOpen = new ArrayList<>();
 		try{
 			for(int i=0; i<portOrder.size();i++){
-				portsOpen.add(new PortTracker(portOrder.get(i),queue));
+				portsOpen.add(new SinglePortTracker(portOrder.get(i),queue));
 				portsOpen.get(i).start();
 				queue.put(portOrder.get(i));
 			}
 			
-			for(PortTracker t: portsOpen){
+			for(SinglePortTracker t: portsOpen){
 				t.join();
-				if(t.isDone()){
-					System.out.println("CLOSER ON "+t.getPort());
-				}
-				else {
+				if(!t.isDone()){
 					System.out.println("ERROR");
 					this.interrupt();
 				}
 			}
+			
+			System.out.println("DOORS OPEN...");
 			
 			
 		}catch (Exception e){

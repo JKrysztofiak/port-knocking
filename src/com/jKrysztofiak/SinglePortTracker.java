@@ -7,7 +7,7 @@ import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-public class PortTracker extends Thread {
+public class SinglePortTracker extends Thread {
 	
 	DatagramSocket socket;
 	int portOg;
@@ -19,7 +19,7 @@ public class PortTracker extends Thread {
 	
 	private BlockingQueue<Integer> queue;
 	
-	public PortTracker(int port, BlockingQueue<Integer> queue) throws SocketException {
+	public SinglePortTracker(int port, BlockingQueue<Integer> queue) throws SocketException {
 		System.out.println("PORT "+port+" OPENED!");
 		this.portOg = port;
 		socket = new DatagramSocket(port);
@@ -48,7 +48,7 @@ public class PortTracker extends Thread {
 			
 			done = true;
 			if(queue.peek() == portOg){
-				System.out.println("QUEEUE PEEK " + queue.peek());
+				System.out.println("QUEUE PEEK " + queue.peek());
 				queue.take();
 				//Odpowiedź
 				String resp = "KNOCK! KNOCK! ON PORT: "+portOg+" GETTING CLOSER!";
@@ -57,7 +57,7 @@ public class PortTracker extends Thread {
 				socket.send(sendPacket);
 				socket.close();
 			}else{
-				System.out.printf("HERE IS AN ERROR PORT CONNECTED: %d ,PORT EXPECTED: %d\n",portOg,queue.peek());
+				System.out.printf("ERROR: PORT CONNECTED: %d ,PORT EXPECTED: %d\n",portOg,queue.peek());
 				done = false;
 				socket.close();
 			}
