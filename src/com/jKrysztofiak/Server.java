@@ -43,8 +43,8 @@ public class Server {
 			log("Sent ports ["+ports+"]");
 			
 			PortKnocker doors = new PortKnocker(portList);
-			Thread t = new Thread(doors);
-			t.start();
+			doors.start();
+			
 			
 		}
 	}

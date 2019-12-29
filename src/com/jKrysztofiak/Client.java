@@ -43,9 +43,10 @@ class Client {
 		//TESTING ARRAY
 		List<Integer> test = new ArrayList<>();
 		test.add(10000);
-		test.add(10002);
 		test.add(10001);
+		test.add(10002);
 		
+		//TODO: CHANGE TO PROPER LIST
 		for(Integer n: test){	//for(Integer n: ports){
 			
 			//Połącznie z portem
