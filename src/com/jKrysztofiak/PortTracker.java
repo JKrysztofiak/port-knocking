@@ -5,6 +5,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 public class PortTracker extends Thread {
 	
@@ -16,11 +17,14 @@ public class PortTracker extends Thread {
 	
 	boolean done = false;
 	
-	public PortTracker(int port) throws SocketException {
+	private BlockingQueue<Integer> queue;
+	
+	public PortTracker(int port, BlockingQueue<Integer> queue) throws SocketException {
 		System.out.println("PORT "+port+" OPENED!");
 		this.portOg = port;
 		socket = new DatagramSocket(port);
 		socket.setSoTimeout(10000);
+		this.queue = queue;
 	}
 	
 	public boolean isDone(){
@@ -42,14 +46,23 @@ public class PortTracker extends Thread {
 			InetAddress IPAddress = receivePacket.getAddress();
 			int port = receivePacket.getPort();
 			
-			//Odpowiedź
-			String resp = "KNOCK! KNOCK! ON PORT: "+portOg+" GETTING CLOSER!";
-			sendData = resp.getBytes();
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-			socket.send(sendPacket);
-
 			done = true;
-			socket.close();
+			if(queue.peek() == portOg){
+				System.out.println("QUEEUE PEEK " + queue.peek());
+				queue.take();
+				//Odpowiedź
+				String resp = "KNOCK! KNOCK! ON PORT: "+portOg+" GETTING CLOSER!";
+				sendData = resp.getBytes();
+				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+				socket.send(sendPacket);
+				socket.close();
+			}else{
+				System.out.printf("HERE IS AN ERROR PORT CONNECTED: %d ,PORT EXPECTED: %d\n",portOg,queue.peek());
+				done = false;
+				socket.close();
+			}
+			
+
 			
 		}catch (Exception e){
 			e.printStackTrace();

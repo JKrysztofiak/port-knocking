@@ -2,17 +2,22 @@ package com.jKrysztofiak;
 
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
-public class PortKnocker implements Runnable {
+public class PortKnocker extends Thread {
 	
 	List<Integer> portOrder;
 	List<PortTracker> portsOpen;
-	int portsToKnock;
 	
-	public PortKnocker(List<Integer> portsNumbers) throws SocketException {
+	private BlockingQueue<Integer> queue;
+	
+	
+	public PortKnocker(List<Integer> portsNumbers){
 		this.portOrder = portsNumbers;
-		portsToKnock = portsNumbers.size();
+		queue = new ArrayBlockingQueue<>(portsNumbers.size());
 	}
 	
 	
@@ -21,8 +26,9 @@ public class PortKnocker implements Runnable {
 		portsOpen = new ArrayList<>();
 		try{
 			for(int i=0; i<portOrder.size();i++){
-				portsOpen.add(new PortTracker(portOrder.get(i)));
+				portsOpen.add(new PortTracker(portOrder.get(i),queue));
 				portsOpen.get(i).start();
+				queue.put(portOrder.get(i));
 			}
 			
 			for(PortTracker t: portsOpen){
@@ -32,11 +38,9 @@ public class PortKnocker implements Runnable {
 				}
 				else {
 					System.out.println("ERROR");
+					this.interrupt();
 				}
-				
 			}
-			
-			System.out.println("ALL RIGHT ");
 			
 			
 		}catch (Exception e){
