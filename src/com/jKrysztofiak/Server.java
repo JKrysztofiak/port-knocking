@@ -42,7 +42,7 @@ public class Server {
 			serverSocket.send(sendPacket);
 			log("Sent ports ["+ports+"]");
 			
-			PortKnocker doors = new PortKnocker(portList);
+			PortKnocker doors = new PortKnocker(portList, IPAddress, port);
 			doors.start();
 			
 			
