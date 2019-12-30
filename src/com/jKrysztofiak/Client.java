@@ -37,7 +37,7 @@ class Client {
 		while(in.hasNextInt()){
 			int x = in.nextInt();
 			ports.add(x);
-			System.out.println(x);
+//			System.out.println(x);
 		}
 		
 		//TESTING ARRAY
@@ -62,17 +62,31 @@ class Client {
 			resp = new String(receivePacket.getData());
 			System.out.println("FROM SERVER: " + resp);
 			
-			//Thread.sleep(1000);
 		}
-		
 		
 		//TODO: Odebranie nowego portu TCP
 		
 		//TODO: Połącznie z portem TCP
-		
-		//TODO: Response od portu TCP
+		Socket socket = new Socket(InetAddress.getByName("localhost"),5000);
 		
 		//TODO: Odebranie pliku
+		
+		byte[] contents = new byte[10000];
+		
+		FileOutputStream fos = new FileOutputStream("C:\\skj2019dzienne\\odebrane\\test.mpg");
+		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		InputStream is = socket.getInputStream();
+		
+		int bytesRead = 0;
+		
+		while((bytesRead=is.read(contents))!=-1){
+			bos.write(contents,0,bytesRead);
+		}
+		
+		bos.flush();
+		socket.close();
+		
+		System.out.println("FILES SAVED ELOOOOOO");
 		
 		//TODO: Wysłanie EXIT
 	}
