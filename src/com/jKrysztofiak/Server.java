@@ -5,6 +5,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Server {
 	
@@ -12,14 +13,25 @@ public class Server {
 		System.out.println("SERVER: "+msg);
 	}
 	
+	private static int getRandomNumberInRange(int min, int max) {
+		
+		if (min >= max) {
+			throw new IllegalArgumentException("max must be greater than min");
+		}
+		
+		Random r = new Random();
+		return r.nextInt((max - min) + 1) + min;
+	}
+	
 	public static void main(String[] args) throws Exception{
 		DatagramSocket serverSocket = new DatagramSocket(9876);
-		List<Integer> portList = new ArrayList<>();
+		List<Integer> portList;
 		
 		byte[] receiveData = new byte[1024];
 		byte[] sendData = new byte[1024];
 		
 		while(true){
+			portList = new ArrayList<>();
 			//Nawiązanie połącznia
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			serverSocket.receive(receivePacket);
@@ -31,7 +43,8 @@ public class Server {
 			//Tworzenie portów
 			String ports = "";
 			for(int i=0; i<Integer.parseInt(args[0]); i++){
-				int portNumber = 10000+i;
+//				int portNumber = 10000+i;
+				int portNumber = getRandomNumberInRange(10000,20000);
 				portList.add(portNumber);
 				ports+=String.valueOf(portNumber)+" ";
 			}

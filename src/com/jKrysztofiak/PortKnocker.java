@@ -47,7 +47,7 @@ public class PortKnocker extends Thread {
 				if(!t.isDone()){
 					System.out.printf("ERROR: THREAD FOR PORT: %d WASN'T FINISHED!\n",t.portOg);
 					workingProperly = false;
-					break;
+					//break;
 				}
 			}
 			

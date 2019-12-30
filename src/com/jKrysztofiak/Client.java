@@ -18,14 +18,14 @@ class Client {
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		
-		//TODO: Port request
+		//Port request
 		String req = "GIVE PORTS";
 		sendData = req.getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
 		clientSocket.send(sendPacket);
 		log("Sent request ["+req+"]");
 		
-		//TODO: Odebranie portów
+		//Odebranie portów
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		clientSocket.receive(receivePacket);
 		String resp = new String(receivePacket.getData());
@@ -46,8 +46,7 @@ class Client {
 		test.add(10001);
 		test.add(10002);
 		
-		//TODO: CHANGE TO PROPER LIST
-		for(Integer n: test){	//for(Integer n: ports){
+		for(Integer n: ports){	//for(Integer n: ports){
 			
 			//Połącznie z portem
 			req = "PORT "+n+" ?";
@@ -66,12 +65,14 @@ class Client {
 		
 		//TODO: Odebranie nowego portu TCP
 		
-		//TODO: Połącznie z portem TCP
+		//Połącznie z portem TCP
+		log("TRING TO CONNECT TO TCP");
 		Socket socket = new Socket(InetAddress.getByName("localhost"),5000);
 		
-		//TODO: Odebranie pliku
-		
+		//Odebranie pliku
 		byte[] contents = new byte[10000];
+		
+		//TODO: File name Change!
 		
 		FileOutputStream fos = new FileOutputStream("C:\\skj2019dzienne\\odebrane\\test.mpg");
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -86,7 +87,7 @@ class Client {
 		bos.flush();
 		socket.close();
 		
-		System.out.println("FILES SAVED ELOOOOOO");
+		System.out.println("FILES SAVED SUCCESFULLY");
 		
 		//TODO: Wysłanie EXIT
 	}
