@@ -54,6 +54,8 @@ public class PortKnocker extends Thread {
 			if(workingProperly){
 				System.out.println("DOORS OPEN...");
 				
+				//TODO: Generate random port
+				
 				ServerSocket serverSocket = new ServerSocket(5000);
 				Socket socket = serverSocket.accept();
 				
@@ -69,33 +71,34 @@ public class PortKnocker extends Thread {
 				long fileLength = file.length();
 				long current = 0;
 				
-				long start = System.nanoTime();
-				while (current!=fileLength){
-					int size = 10000;
-					if(fileLength - current >= size){
-						current+=size;
+				try{
+					long start = System.nanoTime();
+					while (current!=fileLength){
+						int size = 10000;
+						if(fileLength - current >= size){
+							current+=size;
+						}
+						else{
+							size = (int) (fileLength-current);
+							current = fileLength;
+						}
+						contents = new byte[size];
+						bis.read(contents, 0, size);
+						os.write(contents);
+						System.out.print("Sending file ... "+(current*100)/fileLength+"% complete\r");
+						os.flush();
 					}
-					else{
-						size = (int) (fileLength-current);
-						current = fileLength;
-					}
-					contents = new byte[size];
-					bis.read(contents, 0, size);
-					os.write(contents);
-					System.out.print("Sending file ... "+(current*100)/fileLength+"% complete\r");
+				}catch (Exception e){
+					e.printStackTrace();
+				}finally {
+					socket.close();
+					serverSocket.close();
 				}
 				
-				os.flush();
-				socket.close();
-				serverSocket.close();
+				
+				
 				System.out.println("FILE SENT SUCCESFULLY!");
-				
-				
 			}
-			
-			
-			
-			
 		}catch (Exception e){
 			e.printStackTrace();
 		}
