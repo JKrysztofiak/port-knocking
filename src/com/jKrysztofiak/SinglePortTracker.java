@@ -39,14 +39,13 @@ public class SinglePortTracker extends Thread {
 	@Override
 	public void run() {
 		try{
-//			while(!socket.isClosed()){
 			while(!socket.isClosed()){
 				System.out.println("PORT "+portOg+" IS WAITING!");
 				//Nawiązanie połącznia
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				socket.receive(receivePacket);
 				String req  = new String(receivePacket.getData());
-				System.out.println("RECEIVED: " + req);
+				System.out.println("FROM CLIENT: " + req);
 				InetAddress IPAddress = receivePacket.getAddress();
 				int port = receivePacket.getPort();
 				
@@ -65,7 +64,6 @@ public class SinglePortTracker extends Thread {
 						System.out.printf("WRONG CLIENT! [%s:%d != %s:%s]",clientIP, clientPort, IPAddress, port);
 					}else{
 						System.out.printf("ERROR: PORT CONNECTED: %d ,PORT EXPECTED: %d\n",portOg,queue.peek());
-						this.interrupt();
 						socket.close();
 					}
 					done = false;
