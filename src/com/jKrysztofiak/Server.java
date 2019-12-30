@@ -16,7 +16,7 @@ public class Server {
 	private static int getRandomNumberInRange(int min, int max) {
 		
 		if (min >= max) {
-			throw new IllegalArgumentException("max must be greater than min");
+			System.out.println("max must be greater than min");
 		}
 		
 		Random r = new Random();
@@ -36,6 +36,7 @@ public class Server {
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			serverSocket.receive(receivePacket);
 			String req  = new String(receivePacket.getData());
+			System.out.printf("CLIENT: %s:%d\n",receivePacket.getAddress(),receivePacket.getPort());
 			System.out.println("RECEIVED: " + req);
 			InetAddress IPAddress = receivePacket.getAddress();
 			int port = receivePacket.getPort();
@@ -43,8 +44,7 @@ public class Server {
 			//Tworzenie portów
 			String ports = "";
 			for(int i=0; i<Integer.parseInt(args[0]); i++){
-//				int portNumber = 10000+i;
-				int portNumber = getRandomNumberInRange(10000,20000);
+				int portNumber = getRandomNumberInRange(49152,65535);
 				portList.add(portNumber);
 				ports+=String.valueOf(portNumber)+" ";
 			}
