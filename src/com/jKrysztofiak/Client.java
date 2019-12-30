@@ -1,7 +1,9 @@
 package com.jKrysztofiak;
 import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,8 +15,10 @@ class Client {
 	
 	public static void main(String args[]) throws Exception
 	{
-		DatagramSocket clientSocket = new DatagramSocket();
-		InetAddress IPAddress = InetAddress.getByName("localhost");
+		int openingPort = 1000;
+		String adressIP = "127.0.0.1";
+		InetAddress IPAddress = InetAddress.getByName(adressIP);
+		DatagramSocket clientSocket = new DatagramSocket(openingPort);
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		
@@ -24,6 +28,8 @@ class Client {
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
 		clientSocket.send(sendPacket);
 		log("Sent request ["+req+"]");
+		
+		
 		
 		//Odebranie portów
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -72,9 +78,13 @@ class Client {
 		//Odebranie pliku
 		byte[] contents = new byte[10000];
 		
-		//TODO: File name Change!
+		SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+		Date date = new Date();
+		String adress =IPAddress.getHostAddress().replace(".","_")+"_"+openingPort;
+		String name = adress+"_"+format.format(date);
+		String path = "C:\\skj2019dzienne\\odebrane\\"+name+".mpg";
 		
-		FileOutputStream fos = new FileOutputStream("C:\\skj2019dzienne\\odebrane\\test.mpg");
+		FileOutputStream fos = new FileOutputStream(path);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		InputStream is = socket.getInputStream();
 		
