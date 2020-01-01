@@ -4,9 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -20,6 +18,7 @@ public class PortKnocker extends Thread {
 	int clientPort;
 	
 	boolean workingProperly = true;
+	
 	
 	private BlockingQueue<Integer> queue;
 	
@@ -55,9 +54,19 @@ public class PortKnocker extends Thread {
 				System.out.println("DOORS OPEN...");
 				
 				//TODO: Generate random port
+				int portNumber = Server.randomRange(49152,65535);
 				
-				ServerSocket serverSocket = new ServerSocket(5000);
+				//Wysyłanie portu TCP
+				DatagramSocket sSocket = new DatagramSocket();
+				byte[] sendData = new byte[1024];
+				sendData = String.valueOf(portNumber).getBytes();
+				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, clientIP, clientPort);
+				sSocket.send(sendPacket);
+				
+				ServerSocket serverSocket = new ServerSocket(portNumber);
+				System.out.println("TCP PORT: "+portNumber);
 				Socket socket = serverSocket.accept();
+				
 				
 				InetAddress inetAddress = InetAddress.getByName("localhost");
 				

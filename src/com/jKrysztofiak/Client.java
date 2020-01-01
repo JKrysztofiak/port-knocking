@@ -19,8 +19,9 @@ class Client {
 		String adressIP = "127.0.0.1";
 		InetAddress IPAddress = InetAddress.getByName(adressIP);
 		DatagramSocket clientSocket = new DatagramSocket(openingPort);
+		clientSocket.setSoTimeout(20000); // TIMEOUT SET TO 20 SECONDS
 		byte[] sendData = new byte[1024];
-		byte[] receiveData = new byte[1024];
+		byte[] receiveData = new byte[4096];
 		
 		//Port request
 		String req = "GIVE PORTS";
@@ -34,7 +35,7 @@ class Client {
 		//Odebranie portów
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 		clientSocket.receive(receivePacket);
-		String resp = new String(receivePacket.getData());
+		String resp = new String(receivePacket.getData(),0, receivePacket.getLength());
 		System.out.println("FROM SERVER: " + resp);
 		
 		Scanner in = new Scanner(resp);
@@ -64,16 +65,22 @@ class Client {
 			//Response od portu
 			receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			clientSocket.receive(receivePacket);
-			resp = new String(receivePacket.getData());
+			resp = new String(receivePacket.getData(),0, receivePacket.getLength());
 			System.out.println("FROM SERVER: " + resp);
-			
 		}
 		
 		//TODO: Odebranie nowego portu TCP
+		System.out.println("WAITING FOR TCP PORT NUMBER");
+		receivePacket = new DatagramPacket(receiveData, receiveData.length);
+		clientSocket.receive(receivePacket);
+		resp = new String(receivePacket.getData(),0, receivePacket.getLength());
+		System.out.println("FROM SERVER: OPENED TCP PORT - " + resp);
+		
+		int portTCP = Integer.parseInt(resp);
 		
 		//Połącznie z portem TCP
-		log("TRING TO CONNECT TO TCP");
-		Socket socket = new Socket(InetAddress.getByName("localhost"),5000);
+		log("TRYING TO CONNECT TO TCP");
+		Socket socket = new Socket(InetAddress.getByName("localhost"),portTCP);
 		
 		//Odebranie pliku
 		byte[] contents = new byte[10000];
