@@ -14,7 +14,6 @@ public class SinglePortTracker extends Thread {
 	
 	InetAddress clientIP;
 	int clientPort;
-	
 	byte[] receiveData = new byte[1024];
 	byte[] sendData = new byte[1024];
 	
@@ -44,19 +43,27 @@ public class SinglePortTracker extends Thread {
 				//Nawiązanie połącznia
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				socket.receive(receivePacket);
-				String req  = new String(receivePacket.getData());
+				String req  = new String(receivePacket.getData(),0, receivePacket.getLength());
 				System.out.println("FROM CLIENT: " + req);
 				InetAddress IPAddress = receivePacket.getAddress();
 				int port = receivePacket.getPort();
-				
 				if(queue.peek() == portOg && clientIP.equals(IPAddress) && clientPort == port){
 					System.out.println("QUEUE PEEK " + queue.peek());
 					queue.take();
 					//Odpowiedź
-					String resp = "KNOCK! KNOCK! ON PORT: "+portOg+" GETTING CLOSER!";
-					sendData = resp.getBytes();
-					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-					socket.send(sendPacket);
+					if(queue.isEmpty()){
+						System.out.println("ALL PORTS KNOCKED");
+						String resp = "KNOCK! KNOCK! ON PORT: "+portOg+" THE DOORS OPEN!!!";
+						sendData = resp.getBytes();
+						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+						socket.send(sendPacket);
+					}else{
+						String resp = "KNOCK! KNOCK! ON PORT: "+portOg+" GETTING CLOSER!";
+						sendData = resp.getBytes();
+						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+						socket.send(sendPacket);
+					}
+					
 					done=true;
 					socket.close();
 				}else{
